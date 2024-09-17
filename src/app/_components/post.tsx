@@ -1,17 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
-import { db } from "@/db";
+import { useDb } from "@/db";
 
 export function LatestPost() {
   const [name, setName] = useState("");
-  const [posts, setPosts] = useState<{ [node: string]: { name: string } }>({});
-  useEffect(() => {
-    db.get("postss").map().on(async (data) => {
-      setPosts(p => ({ ...p, [data._["#"]]: data }))
-    })
-  }, [])
+  const [posts, postHandler] = useDb<{ name: string }>("postss");
 
   return (
     <div className="w-full max-w-xs">
@@ -23,7 +18,7 @@ export function LatestPost() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          db.get("postss").set({ name })
+          postHandler.set({ name })
         }}
         className="flex flex-col gap-2"
       >
